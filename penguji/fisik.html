@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penguji | PAGARNUSA UNUSIA</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="https://lh3.googleusercontent.com/d/1drM76LlU3sdqpwo-Urq7ZULoyORC0UMQ ">
+
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#1B7548', primaryDark: '#145c38' } } }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="bg-primary text-white p-4 shadow-lg sticky top-0 z-50">
+<div class="flex items-center gap-3">
+    <img src="https://lh3.googleusercontent.com/d/1drM76LlU3sdqpwo-Urq7ZULoyORC0UMQ" 
+         onclick="showPage('page-dashboard')" 
+         alt="Logo Pagar Nusa" 
+         class="h-10 w-auto cursor-pointer object-contain hover:scale-105 transition-transform">
+    <span class="font-bold tracking-wider text-xs uppercase">PAGAR NUSA<br>UNUSIA</span>
+</div>
+    </nav>
+
+    <section id="page-dashboard" class="page active">
+        <main class="max-w-4xl mx-auto p-6">
+            <h1 class="text-2xl font-bold text-slate-800 mb-6">Penguji Fisik</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button onclick="showPage('page-penilaian')" class="flex items-center p-5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:border-primary transition-all text-left group">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-primary transition-colors">
+                        <i class="fas fa-edit text-primary group-hover:text-white"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-slate-800">Input Nilai</h4>
+                        <p class="text-xs text-slate-500">Berikan penilaian peserta.</p>
+                    </div>
+                </button>
+                <button onclick="loadRekapInternal()" class="flex items-center p-5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:border-blue-500 transition-all text-left group">
+                    <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                        <i class="fas fa-table text-blue-500 group-hover:text-white"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-slate-800">Rekap Nilai</h4>
+                        <p class="text-xs text-slate-500">Data penilaian peserta.</p>
+                    </div>
+                </button>
+            </div>
+        </main>
+    </section>
+
+    <section id="page-penilaian" class="page p-6">
+        <div class="max-w-xl mx-auto">
+            <button onclick="showPage('page-dashboard')" class="mb-6 text-sm font-bold text-primary"><i class="fas fa-arrow-left mr-2"></i>Kembali</button>
+            <div class="bg-white p-8 rounded-3xl shadow-xl">
+                <form id="nilaiForm" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold mb-2">Kelompok</label>
+                        <select id="kelompok" required class="w-full rounded-xl border border-slate-200 p-4 text-sm font-semibold outline-none focus:border-primary">
+                            <option value="" disabled selected>Memuat Data...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-2">Nama Peserta</label>
+                        <select id="namaPeserta" required class="w-full rounded-xl border border-slate-200 p-4 text-sm outline-none disabled:opacity-50" disabled>
+                            <option value="" disabled selected>Pilih Nama</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-2">Kriteria</label>
+                        <select id="kriteria" class="w-full rounded-xl border border-slate-200 p-4 text-sm font-semibold outline-none bg-slate-50" readonly>
+                            <option value="Fisik">Fisik</option>
+                        </select>
+                    </div>
+<div>
+    <label class="block text-xs font-bold mb-2">Skor</label>
+    <div class="space-y-3">
+        <select id="skor" required class="w-full rounded-xl border border-slate-200 p-4 text-sm outline-none focus:border-primary">
+            <option value="" disabled selected>Pilih Skor</option>
+            <option value="70">70</option>
+            <option value="80">80</option>
+            <option value="90">90</option>
+            <option value="99">99</option>
+            <option value="custom">Ketik Manual...</option>
+        </select>
+        
+        <input type="number" id="customSkor" placeholder="Masukkan skor manual" 
+               class="hidden w-full rounded-xl border border-slate-200 p-4 text-sm outline-none focus:border-primary" 
+               min="0" max="100">
+    </div>
+</div>
+                    <button type="submit" class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg">SIMPAN NILAI</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="page-rekap" class="page p-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="showPage('page-dashboard')" class="text-sm font-bold text-primary"><i class="fas fa-arrow-left mr-2"></i>Kembali</button>
+                <button onclick="hapusSemua()" class="text-[10px] bg-red-100 text-red-600 px-3 py-1 rounded-lg font-bold uppercase"><i class="fas fa-trash mr-1"></i> Hapus Semua</button>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+                <div class="bg-primary p-4 text-white flex justify-between items-center">
+                    <h3 class="font-bold text-sm uppercase tracking-wider">Rekap Nilai Internal</h3>
+                    <button onclick="downloadExcel()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center border border-white/30">
+                        <i class="fas fa-file-excel mr-2"></i> XLSX
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm" id="table-to-export">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th class="p-4 font-bold text-slate-600">Nama</th>
+                                <th class="p-4 font-bold text-slate-600 text-center">Kel</th>
+                                <th class="p-4 font-bold text-slate-600 text-center">Skor</th>
+                                <th class="p-4 font-bold text-slate-600 text-right">Waktu</th>
+                                <th class="p-4 font-bold text-slate-600 text-center no-export">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabel-rekap" class="divide-y divide-slate-50 text-slate-700 font-medium"></tbody>
+                    </table>
+                </div>
+                <div id="no-data" class="p-10 text-center text-slate-400 hidden">
+                    <i class="fas fa-folder-open text-4xl mb-2"></i>
+                    <p class="text-sm">Belum ada data nilai yang disimpan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Variabel penampung data dari Excel
+        let DB_NILAI = {};
+
+        // Fungsi Membaca File db_nilai.xlsx otomatis saat buka web
+        async function fetchDatabase() {
+            try {
+                const response = await fetch('db_nilai.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, {type: 'array'});
+                
+                // Ambil sheet pertama
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Ubah ke format JSON
+                const results = XLSX.utils.sheet_to_json(worksheet);
+                
+                // Mapping data ke format Kelompok: [Nama1, Nama2]
+                // Asumsi kolom di Excel adalah 'Kelompok' dan 'Nama'
+                results.forEach(row => {
+                    const kel = row.Kelompok.toString();
+                    if (!DB_NILAI[kel]) DB_NILAI[kel] = [];
+                    DB_NILAI[kel].push(row.Nama);
+                });
+
+                updateKelompokDropdown();
+            } catch (error) {
+                console.error("Gagal memuat db_nilai.xlsx:", error);
+                document.getElementById('kelompok').innerHTML = '<option value="" disabled selected>Gagal Memuat Database</option>';
+            }
+        }
+
+        function updateKelompokDropdown() {
+            const selectKel = document.getElementById('kelompok');
+            selectKel.innerHTML = '<option value="" disabled selected>Pilih Kelompok</option>';
+            Object.keys(DB_NILAI).forEach(kel => {
+                const opt = document.createElement('option');
+                opt.value = kel;
+                opt.textContent = "Kelompok " + kel;
+                selectKel.appendChild(opt);
+            });
+        }
+
+        // Jalankan fetch saat window load
+        window.onload = fetchDatabase;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        const selectKel = document.getElementById('kelompok');
+        const selectNama = document.getElementById('namaPeserta');
+
+        selectKel.addEventListener('change', function() {
+            const daftar = DB_NILAI[this.value] || [];
+            selectNama.innerHTML = '<option value="" disabled selected>Pilih Nama</option>';
+            daftar.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n; opt.textContent = n;
+                selectNama.appendChild(opt);
+            });
+            selectNama.disabled = false;
+        });
+
+        document.getElementById('nilaiForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = {
+                nama: selectNama.value,
+                kel: selectKel.value,
+                // Ganti baris skor: document.getElementById('skor').value menjadi ini:
+                skor: selectSkor.value === 'custom' ? customSkorInput.value : selectSkor.value,
+                waktu: new Date().toLocaleString('id-ID', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'})
+            };
+            let storage = JSON.parse(localStorage.getItem('rekapNilaiPagarNusa')) || [];
+            storage.push(data);
+            localStorage.setItem('rekapNilaiPagarNusa', JSON.stringify(storage));
+            alert("Data Tersimpan!");
+            customSkorInput.classList.add('hidden');
+            document.getElementById('nilaiForm').reset();
+            selectNama.disabled = true;
+            showPage('page-dashboard');
+        });
+
+        function loadRekapInternal() {
+            showPage('page-rekap');
+            const storage = JSON.parse(localStorage.getItem('rekapNilaiPagarNusa')) || [];
+            const container = document.getElementById('tabel-rekap');
+            const noData = document.getElementById('no-data');
+            container.innerHTML = "";
+            if(storage.length === 0) { noData.classList.remove('hidden'); } 
+            else {
+                noData.classList.add('hidden');
+                [...storage].reverse().forEach((item, index) => {
+                    const realIndex = storage.length - 1 - index;
+                    container.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-4 font-bold">${item.nama}</td>
+                            <td class="p-4 text-center">${item.kel}</td>
+                            <td class="p-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md font-bold">${item.skor}</span></td>
+                            <td class="p-4 text-right text-xs text-slate-400">${item.waktu}</td>
+                            <td class="p-4 text-center no-export">
+                                <div class="flex justify-center gap-3">
+                                    <button onclick="ubahSkor(${realIndex})" class="text-blue-500 font-bold text-xs">UBAH</button>
+                                    <button onclick="hapusSatu(${realIndex})" class="text-red-500 font-bold text-xs">HAPUS</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+            }
+        }
+
+        function ubahSkor(index) {
+            let storage = JSON.parse(localStorage.getItem('rekapNilaiPagarNusa'));
+            const n = prompt("Skor Baru:", storage[index].skor);
+            if(n) { storage[index].skor = n; localStorage.setItem('rekapNilaiPagarNusa', JSON.stringify(storage)); loadRekapInternal(); }
+        }
+
+        function hapusSatu(index) {
+            let storage = JSON.parse(localStorage.getItem('rekapNilaiPagarNusa'));
+            if(confirm("Hapus data ini?")) { storage.splice(index, 1); localStorage.setItem('rekapNilaiPagarNusa', JSON.stringify(storage)); loadRekapInternal(); }
+        }
+
+        function hapusSemua() {
+            if(confirm("Jika mengosongkan semuanya, maka dapat menilai ulang dari awal lagi!")) { localStorage.removeItem('rekapNilaiPagarNusa'); loadRekapInternal(); }
+        }
+
+        function downloadExcel() {
+            const storage = JSON.parse(localStorage.getItem('rekapNilaiPagarNusa')) || [];
+            if (storage.length === 0) return alert("Tidak ada data untuk diunduh!");
+            const dataPilihan = storage.map(item => ({
+                'Nama Lengkap': item.nama,
+                'Kelompok': item.kel,
+                'Skor Nilai': item.skor,
+                'Waktu Input': item.waktu
+            }));
+            const worksheet = XLSX.utils.json_to_sheet(dataPilihan);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Rekap Nilai");
+            XLSX.writeFile(workbook, `Rekap_Nilai_UKT_${new Date().toLocaleDateString()}.xlsx`);
+        }
+        const selectSkor = document.getElementById('skor');
+const customSkorInput = document.getElementById('customSkor');
+
+selectSkor.addEventListener('change', function() {
+    if (this.value === 'custom') {
+        customSkorInput.classList.remove('hidden');
+        customSkorInput.required = true;
+        customSkorInput.focus();
+    } else {
+        customSkorInput.classList.add('hidden');
+        customSkorInput.required = false;
+        customSkorInput.value = "";
+    }
+});
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | PAGARNUSA UNUSIA</title>
+    <link rel="icon" href="https://uktpagarnusa.my.id/logopn.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 
+                        primary: '#1B7548', 
+                        primaryDark: '#145c38',
+                        accent: '#FFD700'
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s infinite linear',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                            '50%': { 'background-size': '200% 200%', 'background-position': 'right center' }
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        'shimmer': {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: linear-gradient(-45deg, #f8fafc, #f0fdf4, #ecfdf5, #ffffff);
+            background-size: 400% 400%;
+            animation: gradient-x 15s ease infinite;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .input-focus-effect:focus {
+            box-shadow: 0 0 0 4px rgba(27, 117, 72, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Tombol Shimmer Effect */
+        .btn-shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2.5s infinite;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 overflow-x-hidden">
+
+    <div class="fixed top-[-5%] left-[-5%] w-64 h-64 bg-emerald-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-float"></div>
+    <div class="fixed bottom-[-5%] right-[-5%] w-80 h-80 bg-green-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-float" style="animation-delay: 2s"></div>
+
+
+
+    <div class="text-center mb-10 animate__animated animate__fadeInDown">
+        <div class="relative inline-block mb-6">
+            <div class="absolute inset-0 bg-primary/20 rounded-full blur-2xl"></div>
+            <img src="https://uktpagarnusa.my.id/logopn.png" alt="Logo" class="relative h-24 w-auto mx-auto drop-shadow-xl hover:scale-105 transition-transform duration-500">
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 uppercase tracking-tight">Pagar Nusa UNUSIA</h1>
+        <div class="flex items-center justify-center gap-3 mt-2">
+            <div class="h-[1px] w-6 bg-slate-300"></div>
+            <p class="text-slate-500 text-[10px] font-bold tracking-[0.4em] uppercase">Sistem Penilaian</p>
+            <div class="h-[1px] w-6 bg-slate-300"></div>
+        </div>
+    </div>
+
+    <div class="w-full max-w-[400px] glass-card p-8 sm:p-10 rounded-[2rem] shadow-2xl animate__animated animate__zoomIn">
+        
+        <div class="mb-8 text-center sm:text-left">
+            <h2 class="text-2xl font-bold text-slate-800">Login Penguji</h2>
+            <p class="text-sm text-slate-500 mt-1">Gunakan akun resmi untuk mengakses sistem.</p>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div class="animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                <label class="block text-[11px] font-bold text-slate-500 tracking-wider mb-2 ml-1 uppercase">Username</label>
+                <div class="relative group">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                        <i class="fas fa-user-circle"></i>
+                    </span>
+                    <input type="text" id="username" required autocomplete="username" placeholder="Masukkan username"
+                        class="w-full pl-11 pr-4 py-4 bg-white/60 rounded-xl border border-slate-200 focus:border-primary focus:bg-white outline-none transition-all text-sm input-focus-effect">
+                </div>
+            </div>
+
+            <div class="animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                <label class="block text-[11px] font-bold text-slate-500 tracking-wider mb-2 ml-1 uppercase">Kata Sandi</label>
+                <div class="relative group">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                        <i class="fas fa-key"></i>
+                    </span>
+                    <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••"
+                        class="w-full pl-11 pr-12 py-4 bg-white/60 rounded-xl border border-slate-200 focus:border-primary focus:bg-white outline-none transition-all text-sm input-focus-effect">
+                    <button type="button" id="togglePassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors p-2 focus:outline-none">
+                        <i class="fas fa-eye-slash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="error-message" class="hidden animate__animated animate__shakeX flex items-center gap-3 text-red-600 bg-red-50 p-4 rounded-xl text-xs font-semibold border border-red-100">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="error-text">Terjadi kesalahan.</span>
+            </div>
+
+            <div class="pt-2 animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                <button type="submit" id="btnSubmit" class="btn-shimmer w-full bg-primary hover:bg-primaryDark text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-900/20 transition-all transform active:scale-95 flex items-center justify-center gap-3 group">
+                    <span class="tracking-widest uppercase">Login</span>
+                    <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-12 text-center animate__animated animate__fadeIn" style="animation-delay: 1s">
+        <p class="text-[10px] text-slate-400 font-bold tracking-[0.2em] uppercase">
+            &copy; 2024 Pagar Nusa UNUSIA <span class="mx-2 opacity-30">|</span> Secure Login
+        </p>
+    </div>
+
+<script>
+    // Toggle Password
+    const toggleBtn = document.getElementById('togglePassword');
+    const passInput = document.getElementById('password');
+    
+    toggleBtn.onclick = () => {
+        const isPass = passInput.type === 'password';
+        passInput.type = isPass ? 'text' : 'password';
+        toggleBtn.innerHTML = isPass 
+            ? '<i class="fas fa-eye"></i>' 
+            : '<i class="fas fa-eye-slash"></i>';
+    };
+
+    // Handle Login
+    document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btnSubmit');
+        const errorDiv = document.getElementById('error-message');
+        const userInp = document.getElementById('username').value.trim();
+        const passInp = document.getElementById('password').value.trim();
+
+        // UI Reset
+        errorDiv.classList.add('hidden');
+        btn.disabled = true;
+        btn.innerHTML = `
+            <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="ml-2 uppercase tracking-widest">Memproses...</span>
+        `;
+
+        try {
+            // Mengambil file dengan parameter waktu agar tidak ter-cache oleh browser
+            const response = await fetch('db_login.xlsx?nocache=' + new Date().getTime());
+            if (!response.ok) throw new Error("Gagal mengambil data sistem.");
+            
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const data = XLSX.utils.sheet_to_json(sheet);
+
+            const userMatch = data.find(u => {
+                const dbUser = (u.username || u.Username || "").toString().trim();
+                const dbPass = (u.password || u.Password || "").toString().trim();
+                return dbUser === userInp && dbPass === passInp;
+            });
+
+            if (userMatch) {
+                // Beri jeda visual sebelum redirect
+                setTimeout(() => {
+                    localStorage.setItem('currentUserProfile', JSON.stringify(userMatch));
+                    const target = userMatch.redirectUrl || userMatch.redirectURL || 'dashboard.html';
+                    window.location.href = target;
+                }, 1000);
+            } else {
+                throw new Error("Kombinasi Username & Password salah.");
+            }
+
+        } catch (err) {
+            errorDiv.classList.remove('hidden');
+            document.getElementById('error-text').innerText = err.message;
+            resetButton(btn);
+        }
+    };
+
+    function resetButton(btn) {
+        btn.disabled = false;
+        btn.innerHTML = `
+            <span class="tracking-widest uppercase">Masuk Sekarang</span>
+            <i class="fas fa-arrow-right text-xs"></i>
+        `;
+    }
+</script>
+</body>
+</html>
